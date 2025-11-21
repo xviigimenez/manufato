@@ -1,16 +1,24 @@
 package com.example.manufato
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
 
 class ProfileActivity : AppCompatActivity() {
     
+    private lateinit var profileImage: ImageView
+    private lateinit var avatarIcon: TextView
     private lateinit var userName: TextView
     private lateinit var userEmail: TextView
     private lateinit var editProfileItem: LinearLayout
@@ -22,6 +30,14 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var helpItem: LinearLayout
     private lateinit var logoutButton: Button
     private lateinit var userPrefs: UserPreferences
+    
+    private val editProfileLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            loadUserData()
+        }
+    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +52,8 @@ class ProfileActivity : AppCompatActivity() {
     }
     
     private fun initViews() {
+        profileImage = findViewById(R.id.profileImage)
+        avatarIcon = findViewById(R.id.avatarIcon)
         userName = findViewById(R.id.userName)
         userEmail = findViewById(R.id.userEmail)
         editProfileItem = findViewById(R.id.editProfileItem)
@@ -50,7 +68,7 @@ class ProfileActivity : AppCompatActivity() {
     
     private fun setupListeners() {
         editProfileItem.setOnClickListener {
-            showToast("Editar perfil em desenvolvimento")
+            navigateToEditProfile()
         }
         
         myOrdersItem.setOnClickListener {
@@ -89,6 +107,32 @@ class ProfileActivity : AppCompatActivity() {
         
         userName.text = name
         userEmail.text = email
+        
+        // Load profile image
+        userPrefs.getProfileImageUri()?.let { uriString ->
+            try {
+                val uri = Uri.parse(uriString)
+                val file = File(uri.path ?: return@let)
+                if (file.exists()) {
+                    val bitmap = BitmapFactory.decodeFile(file.path)
+                    profileImage.setImageBitmap(bitmap)
+                    profileImage.visibility = View.VISIBLE
+                    avatarIcon.visibility = View.GONE
+                } else {
+                    profileImage.visibility = View.GONE
+                    avatarIcon.visibility = View.VISIBLE
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                profileImage.visibility = View.GONE
+                avatarIcon.visibility = View.VISIBLE
+            }
+        }
+    }
+    
+    private fun navigateToEditProfile() {
+        val intent = Intent(this, EditProfileActivity::class.java)
+        editProfileLauncher.launch(intent)
     }
     
     private fun performLogout() {

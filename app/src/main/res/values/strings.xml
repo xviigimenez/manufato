@@ -61,4 +61,33 @@
     <string name="notifications">Notificações</string>
     <string name="privacy">Privacidade</string>
     <string name="language">Idioma</string>
+    
+    <!-- Edit Profile Screen -->
+    <string name="edit_profile_title">Editar Perfil</string>
+    <string name="change_photo">Alterar Foto</string>
+    <string name="save_changes">Salvar Alterações</string>
+    <string name="cancel">Cancelar</string>
+    <string name="choose_photo_source">Escolher origem da foto</string>
+    <string name="camera">Câmera</string>
+    <string name="gallery">Galeria</string>
+    
+    <!-- Products Screen -->
+    <string name="manage_products">Gerenciar Produtos</string>
+    <string name="add_product">Adicionar Produto</string>
+    <string name="edit_product">Editar Produto</string>
+    <string name="delete_product">Excluir Produto</string>
+    <string name="product_name">Nome do Produto</string>
+    <string name="product_description">Descrição</string>
+    <string name="product_price">Preço</string>
+    <string name="product_quantity">Quantidade</string>
+    <string name="product_category">Categoria</string>
+    <string name="available">Disponível</string>
+    <string name="unavailable">Indisponível</string>
+    <string name="sales">Vendas</string>
+    <string name="stock">Estoque</string>
+    <string name="no_products">Nenhum produto cadastrado</string>
+    <string name="add_first_product">Adicione seu primeiro produto</string>
+    <string name="save_product">Salvar Produto</string>
+    <string name="product_image">Imagem do Produto</string>
+    <string name="add_image">Adicionar Imagem</string>
 </resources>
