@@ -1,5 +1,6 @@
 package com.example.manufato
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                     false
                 }
                 R.id.nav_profile -> {
-                    showToast("Perfil em desenvolvimento")
+                    navigateToProfile()
                     false
                 }
                 else -> false
@@ -61,6 +62,11 @@ class MainActivity : AppCompatActivity() {
     private fun setupCategories() {
         // Categories are clickable but functionality is not implemented yet
         // This is a placeholder for future implementation
+    }
+    
+    private fun navigateToProfile() {
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
     }
     
     private fun showToast(message: String) {
