@@ -16,10 +16,14 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var confirmPasswordInput: EditText
     private lateinit var registerButton: Button
     private lateinit var loginLink: TextView
+    private lateinit var userPrefs: UserPreferences
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+        
+        // Initialize UserPreferences
+        userPrefs = UserPreferences(this)
         
         initViews()
         setupListeners()
@@ -99,8 +103,19 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
         
-        // Simulate registration (replace with actual API call later)
-        Toast.makeText(this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
+        // Check if user already exists
+        if (userPrefs.isUserRegistered()) {
+            val existingEmail = userPrefs.getUserEmail()
+            if (existingEmail == email) {
+                showToast("Este email já está cadastrado. Faça login.")
+                navigateToLogin()
+                return
+            }
+        }
+        
+        // Save user data
+        userPrefs.saveUser(name, email, password)
+        showToast("Cadastro realizado com sucesso!")
         
         // Navigate to main activity
         val intent = Intent(this, MainActivity::class.java)
@@ -111,5 +126,9 @@ class RegisterActivity : AppCompatActivity() {
     
     private fun navigateToLogin() {
         finish()
+    }
+    
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

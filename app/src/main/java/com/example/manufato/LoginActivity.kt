@@ -15,9 +15,20 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginButton: Button
     private lateinit var registerLink: TextView
     private lateinit var forgotPassword: TextView
+    private lateinit var userPrefs: UserPreferences
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Initialize UserPreferences
+        userPrefs = UserPreferences(this)
+        
+        // Check if user is already logged in
+        if (userPrefs.isLoggedIn()) {
+            navigateToMain()
+            return
+        }
+        
         setContentView(R.layout.activity_login)
         
         initViews()
@@ -75,10 +86,24 @@ class LoginActivity : AppCompatActivity() {
             return
         }
         
-        // Simulate login (replace with actual authentication later)
-        Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
+        // Check if user is registered
+        if (!userPrefs.isUserRegistered()) {
+            showToast("Usuário não encontrado. Por favor, cadastre-se primeiro.")
+            return
+        }
         
-        // Navigate to main activity
+        // Attempt login
+        if (userPrefs.login(email, password)) {
+            showToast("Login realizado com sucesso!")
+            navigateToMain()
+        } else {
+            showToast("Email ou senha incorretos")
+            passwordInput.error = "Credenciais inválidas"
+            passwordInput.requestFocus()
+        }
+    }
+    
+    private fun navigateToMain() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
@@ -88,5 +113,9 @@ class LoginActivity : AppCompatActivity() {
     private fun navigateToRegister() {
         val intent = Intent(this, RegisterActivity::class.java)
         startActivity(intent)
+    }
+    
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

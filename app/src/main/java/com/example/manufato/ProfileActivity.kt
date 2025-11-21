@@ -21,10 +21,14 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var settingsItem: LinearLayout
     private lateinit var helpItem: LinearLayout
     private lateinit var logoutButton: Button
+    private lateinit var userPrefs: UserPreferences
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+        
+        // Initialize UserPreferences
+        userPrefs = UserPreferences(this)
         
         initViews()
         setupListeners()
@@ -79,13 +83,17 @@ class ProfileActivity : AppCompatActivity() {
     }
     
     private fun loadUserData() {
-        // This would normally load from SharedPreferences or a database
-        userName.text = "Nome do Usuário"
-        userEmail.text = "usuario@email.com"
+        // Load actual user data from SharedPreferences
+        val name = userPrefs.getUserName() ?: "Nome do Usuário"
+        val email = userPrefs.getUserEmail() ?: "usuario@email.com"
+        
+        userName.text = name
+        userEmail.text = email
     }
     
     private fun performLogout() {
-        // Clear user session data here
+        // Clear user session
+        userPrefs.logout()
         showToast("Até logo!")
         
         // Navigate back to login

@@ -9,8 +9,21 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
+    
+    private lateinit var userPrefs: UserPreferences
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Initialize UserPreferences
+        userPrefs = UserPreferences(this)
+        
+        // Check if user is logged in
+        if (!userPrefs.isLoggedIn()) {
+            navigateToLogin()
+            return
+        }
+        
         setContentView(R.layout.activity_main)
         
         // Handle window insets for edge-to-edge display
@@ -67,6 +80,13 @@ class MainActivity : AppCompatActivity() {
     private fun navigateToProfile() {
         val intent = Intent(this, ProfileActivity::class.java)
         startActivity(intent)
+    }
+    
+    private fun navigateToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
     
     private fun showToast(message: String) {
