@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">manufato</string>
+    
+    <!-- Home Screen -->
+    <string name="home_title">Manufato</string>
+    <string name="search_hint">Buscar produtos artesanais...</string>
+    <string name="categories_title">Categorias</string>
+    <string name="featured_products">Produtos em Destaque</string>
+    <string name="view_all">Ver Tudo</string>
+    
+    <!-- Categories -->
+    <string name="category_ceramics">Cerâmica</string>
+    <string name="category_textiles">Têxteis</string>
+    <string name="category_jewelry">Joias</string>
+    <string name="category_wood">Madeira</string>
+    <string name="category_leather">Couro</string>
+    <string name="category_art">Arte</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Início</string>
+    <string name="nav_products">Produtos</string>
+    <string name="nav_favorites">Favoritos</string>
+    <string name="nav_profile">Perfil</string>
+    
+    <!-- Common -->
+    <string name="price_format">R$ %.2f</string>
+</resources>
