@@ -6,17 +6,23 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     
     private lateinit var userPrefs: UserPreferences
+    private lateinit var productPrefs: ProductPreferences
+    private lateinit var productsRecyclerView: RecyclerView
+    private lateinit var productAdapter: HomeProductAdapter
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         // Initialize UserPreferences
         userPrefs = UserPreferences(this)
+        productPrefs = ProductPreferences(this)
         
         // Check if user is logged in
         if (!userPrefs.isLoggedIn()) {
@@ -36,6 +42,32 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigation()
         setupSearchBar()
         setupCategories()
+        setupProductsList()
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        loadProducts()
+    }
+    
+    private fun setupProductsList() {
+        productsRecyclerView = findViewById(R.id.productsRecyclerView)
+        productsRecyclerView.layoutManager = LinearLayoutManager(this)
+        
+        productAdapter = HomeProductAdapter(emptyList()) { product ->
+            // TODO: Navigate to product detail
+            showToast("Produto: ${product.name}")
+        }
+        
+        productsRecyclerView.adapter = productAdapter
+        loadProducts()
+    }
+    
+    private fun loadProducts() {
+        val products = productPrefs.getProducts()
+        // Only show available products on home page
+        val availableProducts = products.filter { it.isAvailable }
+        productAdapter.updateProducts(availableProducts)
     }
     
     private fun setupBottomNavigation() {
