@@ -24,4 +24,41 @@
     
     <!-- Common -->
     <string name="price_format">R$ %.2f</string>
+    
+    <!-- Login Screen -->
+    <string name="login_title">Entrar</string>
+    <string name="login_subtitle">Bem-vindo de volta!</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Senha</string>
+    <string name="forgot_password">Esqueceu a senha?</string>
+    <string name="login_button">Entrar</string>
+    <string name="no_account">Não tem uma conta?</string>
+    <string name="register_link">Cadastre-se</string>
+    
+    <!-- Register Screen -->
+    <string name="register_title">Criar Conta</string>
+    <string name="register_subtitle">Junte-se ao Manufato</string>
+    <string name="name_hint">Nome completo</string>
+    <string name="confirm_password_hint">Confirmar senha</string>
+    <string name="register_button">Cadastrar</string>
+    <string name="have_account">Já tem uma conta?</string>
+    <string name="login_link">Faça login</string>
+    <string name="terms_agreement">Ao se cadastrar, você concorda com nossos Termos de Uso e Política de Privacidade</string>
+    
+    <!-- Profile Screen -->
+    <string name="profile_title">Perfil</string>
+    <string name="edit_profile">Editar Perfil</string>
+    <string name="my_orders">Meus Pedidos</string>
+    <string name="my_products">Meus Produtos</string>
+    <string name="favorites">Favoritos</string>
+    <string name="settings">Configurações</string>
+    <string name="help_support">Ajuda e Suporte</string>
+    <string name="about">Sobre</string>
+    <string name="logout">Sair</string>
+    <string name="account">Conta</string>
+    <string name="general">Geral</string>
+    <string name="become_artisan">Tornar-se Artesão</string>
+    <string name="notifications">Notificações</string>
+    <string name="privacy">Privacidade</string>
+    <string name="language">Idioma</string>
 </resources>

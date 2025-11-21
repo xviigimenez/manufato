@@ -4,21 +4,21 @@
     <color name="white">#FFFFFFFF</color>
     
     <!-- Primary colors -->
-    <color name="primary">#8B4513</color>
-    <color name="primary_dark">#5D2F0E</color>
-    <color name="primary_light">#D4A574</color>
-    <color name="accent">#FF6F00</color>
+    <color name="primary">#043728</color>
+    <color name="primary_dark">#022418</color>
+    <color name="primary_light">#065A43</color>
+    <color name="accent">#6F10B981</color>
     
     <!-- Background colors -->
-    <color name="background">#F5F5F5</color>
+    <color name="background">#7FF0FDF4</color>
     <color name="surface">#FFFFFF</color>
     
     <!-- Text colors -->
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
-    <color name="text_hint">#BDBDBD</color>
+    <color name="text_primary">#022418</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_hint">#9CA3AF</color>
     
     <!-- Other colors -->
-    <color name="divider">#E0E0E0</color>
-    <color name="category_bg">#FFF3E0</color>
+    <color name="divider">#80D1FAE5</color>
+    <color name="category_bg">#7FBAC8BE</color>
 </resources>
