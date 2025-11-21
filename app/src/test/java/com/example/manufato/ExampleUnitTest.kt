@@ -1,4 +1,4 @@
-package com.gustavo.manufato
+package com.example.manufato
 
 import org.junit.Test
 

@@ -4,13 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.gustavo.manufato"
-    compileSdk {
-        version = release(36)
-    }
+    namespace = "com.example.manufato"
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.gustavo.manufato"
+        applicationId = "com.example.manufato"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -34,6 +32,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+    buildFeatures {
+        viewBinding = true
     }
 }
 
