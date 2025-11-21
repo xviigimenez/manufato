@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_products -> {
-                    showToast("Produtos em desenvolvimento")
+                    navigateToProducts()
                     false
                 }
                 R.id.nav_favorites -> {
@@ -79,6 +79,11 @@ class MainActivity : AppCompatActivity() {
     
     private fun navigateToProfile() {
         val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
+    }
+    
+    private fun navigateToProducts() {
+        val intent = Intent(this, ProductsActivity::class.java)
         startActivity(intent)
     }
     

@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.io.File
 
 class ProfileActivity : AppCompatActivity() {
@@ -29,6 +30,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var settingsItem: LinearLayout
     private lateinit var helpItem: LinearLayout
     private lateinit var logoutButton: Button
+    private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var userPrefs: UserPreferences
     
     private val editProfileLauncher = registerForActivityResult(
@@ -48,6 +50,7 @@ class ProfileActivity : AppCompatActivity() {
         
         initViews()
         setupListeners()
+        setupBottomNavigation()
         loadUserData()
     }
     
@@ -64,6 +67,8 @@ class ProfileActivity : AppCompatActivity() {
         settingsItem = findViewById(R.id.settingsItem)
         helpItem = findViewById(R.id.helpItem)
         logoutButton = findViewById(R.id.logoutButton)
+        bottomNavigation = findViewById(R.id.bottomNavigation)
+        bottomNavigation.selectedItemId = R.id.nav_profile
     }
     
     private fun setupListeners() {
@@ -76,7 +81,7 @@ class ProfileActivity : AppCompatActivity() {
         }
         
         myProductsItem.setOnClickListener {
-            showToast("Meus produtos em desenvolvimento")
+            navigateToProducts()
         }
         
         favoritesItem.setOnClickListener {
@@ -133,6 +138,42 @@ class ProfileActivity : AppCompatActivity() {
     private fun navigateToEditProfile() {
         val intent = Intent(this, EditProfileActivity::class.java)
         editProfileLauncher.launch(intent)
+    }
+    
+    private fun navigateToProducts() {
+        val intent = Intent(this, ProductsActivity::class.java)
+        startActivity(intent)
+    }
+    
+    private fun setupBottomNavigation() {
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    navigateToHome()
+                    true
+                }
+                R.id.nav_products -> {
+                    navigateToProducts()
+                    true
+                }
+                R.id.nav_favorites -> {
+                    // TODO: Navigate to favorites
+                    true
+                }
+                R.id.nav_profile -> {
+                    // Already on profile screen
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+    
+    private fun navigateToHome() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        startActivity(intent)
+        finish()
     }
     
     private fun performLogout() {

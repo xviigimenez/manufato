@@ -56,6 +56,16 @@
         <activity
             android:name=".EditProfileActivity"
             android:exported="false" />
+        
+        <!-- Products Activity -->
+        <activity
+            android:name=".ProductsActivity"
+            android:exported="false" />
+        
+        <!-- Add/Edit Product Activity -->
+        <activity
+            android:name=".AddEditProductActivity"
+            android:exported="false" />
             
     </application>
 
