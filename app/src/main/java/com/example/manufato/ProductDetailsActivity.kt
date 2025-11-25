@@ -2,6 +2,7 @@ package com.example.manufato
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -30,7 +31,13 @@ class ProductDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product_details)
         
-        product = intent.getParcelableExtra("PRODUCT")
+        // Get product from intent with version check
+        product = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("PRODUCT", Product::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("PRODUCT")
+        }
         
         initViews()
         setupListeners()
@@ -92,7 +99,8 @@ class ProductDetailsActivity : AppCompatActivity() {
             }
         } ?: run {
             Toast.makeText(this, "Erro ao carregar produto", Toast.LENGTH_SHORT).show()
-            finish()
+            // Optional: Log failure or don't finish immediately to let user see error?
+            // finish() 
         }
     }
     
