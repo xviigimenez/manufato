@@ -90,4 +90,27 @@
     <string name="save_product">Salvar Produto</string>
     <string name="product_image">Imagem do Produto</string>
     <string name="add_image">Adicionar Imagem</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Configurações</string>
+    <string name="back_button_desc">Voltar</string>
+    <string name="app_settings_header">Configurações do Aplicativo</string>
+    <string name="account_settings_header">Configurações da Conta</string>
+    <string name="enable_notifications">Ativar notificações</string>
+    <string name="enable_notifications_desc">Receba alertas sobre seus pedidos e produtos</string>
+    <string name="dark_mode">Modo Escuro</string>
+    <string name="dark_mode_desc">Alterar a aparência do aplicativo</string>
+    <string name="change_password">Alterar Senha</string>
+    <string name="privacy_policy">Política de Privacidade</string>
+    <string name="delete_account">Excluir Conta</string>
+    <string name="app_version">Versão 1.0.0</string>
+
+    <!-- Cart Screen -->
+    <string name="cart_title">Carrinho de Compras</string>
+    <string name="empty_cart_title">Seu carrinho está vazio</string>
+    <string name="empty_cart_desc">Parece que você ainda não adicionou nenhum produto ao seu carrinho.</string>
+    <string name="start_shopping">Começar a Comprar</string>
+    <string name="total">Total:</string>
+    <string name="checkout">Finalizar Compra</string>
+    <string name="empty_cart_desc_2">Explore nossos produtos artesanais e encontre algo especial para você!</string>
 </resources>

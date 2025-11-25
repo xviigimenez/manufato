@@ -10,17 +10,23 @@
     <color name="accent">#10B981</color>
 
     <!-- Background colors -->
-    <color name="background">#F0FDF4</color>
+    <color name="background">#F1F1F1</color>
+    <color name="background_light">#F9FAFB</color>
     <color name="surface">#FFFFFF</color>
 
     <!-- Text colors -->
     <color name="text_primary">#022418</color>
     <color name="text_secondary">#6B7280</color>
     <color name="text_hint">#9CA3AF</color>
+    
+    <!-- Status colors -->
+    <color name="success_green">#10B981</color>
+    <color name="error_red">#EF4444</color>
 
     <!-- Other colors -->
-    <color name="divider">#D1FAE5</color>
+    <color name="divider">#014e26</color>
     <color name="category_bg">#BAC8BE</color>
+    <color name="nav_indicator">#E0E0E0</color>
 
     <!-- login color -->
     <color name="brandDark">#0b4f3f</color>

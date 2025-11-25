@@ -20,11 +20,13 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="140dp"
+            android:layout_height="match_parent"
             android:src="@drawable/ic_manufato_logo"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="@string/app_name" />
+            android:layout_gravity="start"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitStart"
+            android:paddingVertical="8dp"/>
 
     </com.google.android.material.appbar.MaterialToolbar>
 
@@ -33,8 +35,10 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:paddingBottom="72dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -118,19 +122,5 @@
         </LinearLayout>
 
     </ScrollView>
-
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="8dp"
-        app:itemIconTint="@color/primary"
-        app:itemTextColor="@color/text_primary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:menu="@menu/bottom_navigation_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

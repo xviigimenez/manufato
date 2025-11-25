@@ -9,11 +9,13 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +24,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -35,9 +39,13 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var changePhotoText: TextView
     private lateinit var nameInput: EditText
     private lateinit var emailInput: EditText
+    private lateinit var changePasswordItem: LinearLayout
+    private lateinit var privacyPolicyItem: LinearLayout
+    private lateinit var deleteAccountItem: LinearLayout
     private lateinit var saveButton: Button
     private lateinit var cancelButton: TextView
     private lateinit var userPrefs: UserPreferences
+    private lateinit var auth: FirebaseAuth
     
     private var currentPhotoUri: Uri? = null
     
@@ -76,6 +84,9 @@ class EditProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
         
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
+        
         userPrefs = UserPreferences(this)
         
         initViews()
@@ -91,6 +102,9 @@ class EditProfileActivity : AppCompatActivity() {
         changePhotoText = findViewById(R.id.changePhotoText)
         nameInput = findViewById(R.id.nameInput)
         emailInput = findViewById(R.id.emailInput)
+        changePasswordItem = findViewById(R.id.changePasswordItem)
+        privacyPolicyItem = findViewById(R.id.privacyPolicyItem)
+        deleteAccountItem = findViewById(R.id.deleteAccountItem)
         saveButton = findViewById(R.id.saveButton)
         cancelButton = findViewById(R.id.cancelButton)
     }
@@ -107,6 +121,20 @@ class EditProfileActivity : AppCompatActivity() {
         changePhotoText.setOnClickListener {
             requestPhotoChange()
         }
+
+        changePasswordItem.setOnClickListener {
+            val intent = Intent(this, ChangePasswordActivity::class.java)
+            startActivity(intent)
+        }
+
+        privacyPolicyItem.setOnClickListener {
+            val intent = Intent(this, PrivacyPolicyActivity::class.java)
+            startActivity(intent)
+        }
+
+        deleteAccountItem.setOnClickListener {
+            showDeleteAccountDialog()
+        }
         
         saveButton.setOnClickListener {
             saveChanges()
@@ -116,12 +144,65 @@ class EditProfileActivity : AppCompatActivity() {
             finish()
         }
     }
+
+    private fun showDeleteAccountDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Excluir conta")
+            .setMessage("Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.")
+            .setPositiveButton("Sim, excluir") { _, _ ->
+                deleteAccount()
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun deleteAccount() {
+        val user = auth.currentUser
+        
+        if (user != null) {
+            user.delete()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "User account deleted.")
+                        userPrefs.clearAllData()
+                        Toast.makeText(this, "Conta excluída com sucesso", Toast.LENGTH_SHORT).show()
+                        
+                        // Navigate back to login
+                        val intent = Intent(this, LoginActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Log.e(TAG, "User account deletion failed.", task.exception)
+                        // If deletion fails (e.g., requires recent login), prompt user to re-authenticate
+                        Toast.makeText(this, "Erro ao excluir conta: ${task.exception?.localizedMessage}. Tente fazer logout e login novamente.", Toast.LENGTH_LONG).show()
+                    }
+                }
+        } else {
+            // Fallback if no firebase user found
+            userPrefs.clearAllData()
+            Toast.makeText(this, "Conta local excluída", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
+    }
     
     private fun loadUserData() {
-        nameInput.setText(userPrefs.getUserName() ?: "")
-        emailInput.setText(userPrefs.getUserEmail() ?: "")
+        val user = auth.currentUser
+        if (user != null) {
+            nameInput.setText(user.displayName ?: "")
+            emailInput.setText(user.email ?: "")
+            
+            // Email field is typically read-only in simple edits or requires re-auth to change
+            // For now let's keep it editable but we need to handle email update carefully
+        } else {
+            nameInput.setText(userPrefs.getUserName() ?: "")
+            emailInput.setText(userPrefs.getUserEmail() ?: "")
+        }
         
-        // Load profile image
+        // Load profile image (locally stored for now)
         userPrefs.getProfileImageUri()?.let { uriString ->
             try {
                 val uri = Uri.parse(uriString)
@@ -241,14 +322,62 @@ class EditProfileActivity : AppCompatActivity() {
             return
         }
         
-        // Save changes
-        userPrefs.updateUserName(name)
-        userPrefs.updateUserEmail(email)
+        val user = auth.currentUser
         
-        Toast.makeText(this, "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show()
-        
-        // Return to profile
+        if (user != null) {
+            // Update Profile Name
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build()
+
+            user.updateProfile(profileUpdates)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "User profile updated.")
+                        
+                        // Check if email changed
+                        if (email != user.email) {
+                            updateEmail(email)
+                        } else {
+                            showToastAndFinish("Perfil atualizado com sucesso!")
+                        }
+                    } else {
+                        showToast("Erro ao atualizar perfil: ${task.exception?.message}")
+                    }
+                }
+        } else {
+            // Local fallback
+            userPrefs.updateUserName(name)
+            userPrefs.updateUserEmail(email)
+            showToastAndFinish("Perfil atualizado com sucesso!")
+        }
+    }
+    
+    private fun updateEmail(newEmail: String) {
+        val user = auth.currentUser
+        user?.verifyBeforeUpdateEmail(newEmail)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "User email update verification sent.")
+                    showToastAndFinish("Perfil atualizado. Verifique o novo email para confirmar a alteração.")
+                } else {
+                    Log.e(TAG, "User email update failed.", task.exception)
+                    showToast("Erro ao atualizar email: ${task.exception?.message}. Pode ser necessário fazer login novamente.")
+                }
+            }
+    }
+    
+    private fun showToastAndFinish(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         setResult(Activity.RESULT_OK)
         finish()
+    }
+    
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    companion object {
+        private const val TAG = "EditProfileActivity"
     }
 }

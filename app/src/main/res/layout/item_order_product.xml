@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="4dp">
+
+    <TextView
+        android:id="@+id/itemQuantity"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:text="1x"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary" />
+
+    <TextView
+        android:id="@+id/itemName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Nome do Produto"
+        android:textSize="14sp"
+        android:textColor="@color/text_primary" />
+
+    <TextView
+        android:id="@+id/itemPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="R$ 99,90"
+        android:textSize="14sp"
+        android:textColor="@color/text_primary"
+        android:layout_marginStart="8dp" />
+
+</LinearLayout>

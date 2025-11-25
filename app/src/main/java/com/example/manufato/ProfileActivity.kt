@@ -12,11 +12,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import java.io.File
 
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : BaseActivity() {
     
     private lateinit var profileImage: ImageView
     private lateinit var avatarIcon: TextView
@@ -27,11 +26,12 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var myProductsItem: LinearLayout
     private lateinit var favoritesItem: LinearLayout
     private lateinit var notificationsItem: LinearLayout
-    private lateinit var settingsItem: LinearLayout
     private lateinit var helpItem: LinearLayout
     private lateinit var logoutButton: Button
-    private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var userPrefs: UserPreferences
+    private lateinit var auth: FirebaseAuth
+    
+    override fun getCurrentNavItemId(): Int = R.id.nav_profile
     
     private val editProfileLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -45,13 +45,16 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
         
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
+        
         // Initialize UserPreferences
         userPrefs = UserPreferences(this)
         
         initViews()
         setupListeners()
-        setupBottomNavigation()
         loadUserData()
+        setSelectedNavItem(R.id.nav_profile)
     }
     
     private fun initViews() {
@@ -64,11 +67,8 @@ class ProfileActivity : AppCompatActivity() {
         myProductsItem = findViewById(R.id.myProductsItem)
         favoritesItem = findViewById(R.id.favoritesItem)
         notificationsItem = findViewById(R.id.notificationsItem)
-        settingsItem = findViewById(R.id.settingsItem)
         helpItem = findViewById(R.id.helpItem)
         logoutButton = findViewById(R.id.logoutButton)
-        bottomNavigation = findViewById(R.id.bottomNavigation)
-        bottomNavigation.selectedItemId = R.id.nav_profile
     }
     
     private fun setupListeners() {
@@ -77,27 +77,26 @@ class ProfileActivity : AppCompatActivity() {
         }
         
         myOrdersItem.setOnClickListener {
-            showToast("Meus pedidos em desenvolvimento")
+            val intent = Intent(this, OrdersActivity::class.java)
+            startActivity(intent)
         }
         
         myProductsItem.setOnClickListener {
-            navigateToProducts()
+            NavigationHelper.navigateToProducts(this)
         }
         
         favoritesItem.setOnClickListener {
-            showToast("Favoritos em desenvolvimento")
+            NavigationHelper.navigateToCart(this)
         }
         
         notificationsItem.setOnClickListener {
-            showToast("Notificações em desenvolvimento")
-        }
-        
-        settingsItem.setOnClickListener {
-            showToast("Configurações em desenvolvimento")
+            val intent = Intent(this, NotificationsActivity::class.java)
+            startActivity(intent)
         }
         
         helpItem.setOnClickListener {
-            showToast("Ajuda e suporte em desenvolvimento")
+            val intent = Intent(this, HelpSupportActivity::class.java)
+            startActivity(intent)
         }
         
         logoutButton.setOnClickListener {
@@ -106,14 +105,24 @@ class ProfileActivity : AppCompatActivity() {
     }
     
     private fun loadUserData() {
-        // Load actual user data from SharedPreferences
-        val name = userPrefs.getUserName() ?: "Nome do Usuário"
-        val email = userPrefs.getUserEmail() ?: "usuario@email.com"
+        // Load user data from Firebase
+        val user = auth.currentUser
+        if (user != null) {
+            val name = user.displayName ?: "Nome do Usuário"
+            val email = user.email ?: "usuario@email.com"
+            
+            userName.text = name
+            userEmail.text = email
+        } else {
+            // Fallback to UserPreferences if not logged in via Firebase (shouldn't happen normally)
+            val name = userPrefs.getUserName() ?: "Nome do Usuário"
+            val email = userPrefs.getUserEmail() ?: "usuario@email.com"
+            
+            userName.text = name
+            userEmail.text = email
+        }
         
-        userName.text = name
-        userEmail.text = email
-        
-        // Load profile image
+        // Load profile image from local storage for now (since Firebase Storage isn't set up yet)
         userPrefs.getProfileImageUri()?.let { uriString ->
             try {
                 val uri = Uri.parse(uriString)
@@ -144,41 +153,14 @@ class ProfileActivity : AppCompatActivity() {
         val intent = Intent(this, ProductsActivity::class.java)
         startActivity(intent)
     }
-    
-    private fun setupBottomNavigation() {
-        bottomNavigation.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    navigateToHome()
-                    true
-                }
-                R.id.nav_products -> {
-                    navigateToProducts()
-                    true
-                }
-                R.id.nav_cart -> {
-                    showToast("Carrinho em desenvolvimento")
-                    true
-                }
-                R.id.nav_profile -> {
-                    // Already on profile screen
-                    true
-                }
-                else -> false
-            }
-        }
-    }
-    
-    private fun navigateToHome() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        startActivity(intent)
-        finish()
-    }
-    
+
     private fun performLogout() {
-        // Clear user session
+        // Sign out from Firebase
+        auth.signOut()
+        
+        // Clear user session in local preferences if needed (though Firebase handles auth state)
         userPrefs.logout()
+        
         showToast("Até logo!")
         
         // Navigate back to login

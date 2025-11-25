@@ -55,6 +55,10 @@ class UserPreferences(context: Context) {
         return prefs.getString(KEY_USER_EMAIL, null)
     }
     
+    fun getUserPassword(): String? {
+        return prefs.getString(KEY_USER_PASSWORD, null)
+    }
+    
     fun isUserRegistered(): Boolean {
         return prefs.getString(KEY_USER_EMAIL, null) != null
     }
@@ -65,6 +69,10 @@ class UserPreferences(context: Context) {
     
     fun updateUserEmail(email: String) {
         prefs.edit().putString(KEY_USER_EMAIL, email).apply()
+    }
+
+    fun updateUserPassword(password: String) {
+        prefs.edit().putString(KEY_USER_PASSWORD, password).apply()
     }
     
     fun getProfileImageUri(): String? {

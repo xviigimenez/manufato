@@ -2,11 +2,13 @@ package com.example.manufato
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
     
@@ -15,16 +17,17 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginButton: Button
     private lateinit var registerLink: TextView
     private lateinit var forgotPassword: TextView
-    private lateinit var userPrefs: UserPreferences
+    private lateinit var auth: FirebaseAuth
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Initialize UserPreferences
-        userPrefs = UserPreferences(this)
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
         
         // Check if user is already logged in
-        if (userPrefs.isLoggedIn()) {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
             navigateToMain()
             return
         }
@@ -53,7 +56,13 @@ class LoginActivity : AppCompatActivity() {
         }
         
         forgotPassword.setOnClickListener {
-            Toast.makeText(this, "Recuperação de senha em desenvolvimento", Toast.LENGTH_SHORT).show()
+            val email = emailInput.text.toString().trim()
+            if (email.isNotEmpty()) {
+                sendPasswordResetEmail(email)
+            } else {
+                emailInput.error = "Digite seu e-mail para recuperar a senha"
+                emailInput.requestFocus()
+            }
         }
     }
     
@@ -86,21 +95,31 @@ class LoginActivity : AppCompatActivity() {
             return
         }
         
-        // Check if user is registered
-        if (!userPrefs.isUserRegistered()) {
-            showToast("Usuário não encontrado. Por favor, cadastre-se primeiro.")
-            return
-        }
-        
-        // Attempt login
-        if (userPrefs.login(email, password)) {
-            showToast("Login realizado com sucesso!")
-            navigateToMain()
-        } else {
-            showToast("Email ou senha incorretos")
-            passwordInput.error = "Credenciais inválidas"
-            passwordInput.requestFocus()
-        }
+        // Attempt login with Firebase
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithEmail:success")
+                    showToast("Login realizado com sucesso!")
+                    navigateToMain()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+                    showToast("Falha na autenticação: ${task.exception?.localizedMessage}")
+                }
+            }
+    }
+    
+    private fun sendPasswordResetEmail(email: String) {
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    showToast("Email de recuperação de senha enviado.")
+                } else {
+                    showToast("Falha ao enviar email: ${task.exception?.localizedMessage}")
+                }
+            }
     }
     
     private fun navigateToMain() {
@@ -117,5 +136,9 @@ class LoginActivity : AppCompatActivity() {
     
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+    
+    companion object {
+        private const val TAG = "LoginActivity"
     }
 }

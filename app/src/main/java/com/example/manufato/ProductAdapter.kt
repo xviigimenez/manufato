@@ -10,10 +10,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
 
-class ProductAdapter(
+class ProductsAdapter(
     private var products: List<Product>,
-    private val onEditClick: (Product) -> Unit
-) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
+    private val listener: OnProductClickListener
+) : RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>() {
+
+    interface OnProductClickListener {
+        fun onEditClick(product: Product)
+        fun onDeleteClick(product: Product)
+    }
 
     class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val productImage: ImageView = view.findViewById(R.id.productImage)
@@ -25,6 +30,7 @@ class ProductAdapter(
         val productSales: TextView = view.findViewById(R.id.productSales)
         val productAvailability: TextView = view.findViewById(R.id.productAvailability)
         val editButton: ImageView = view.findViewById(R.id.editButton)
+        val deleteButton: ImageView = view.findViewById(R.id.deleteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
@@ -80,13 +86,17 @@ class ProductAdapter(
         }
         
         holder.editButton.setOnClickListener {
-            onEditClick(product)
+            listener.onEditClick(product)
+        }
+
+        holder.deleteButton.setOnClickListener {
+            listener.onDeleteClick(product)
         }
     }
 
     override fun getItemCount() = products.size
 
-    fun updateProducts(newProducts: List<Product>) {
+    fun updateData(newProducts: List<Product>) {
         products = newProducts
         notifyDataSetChanged()
     }

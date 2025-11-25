@@ -42,13 +42,13 @@ class ProductPreferences(context: Context) {
         }
     }
     
-    fun deleteProduct(productId: String) {
+    fun deleteProduct(productId: Long) {
         val products = getProducts().toMutableList()
         products.removeAll { it.id == productId }
         saveProducts(products)
     }
     
-    fun getProductById(id: String): Product? {
+    fun getProductById(id: Long): Product? {
         return getProducts().find { it.id == id }
     }
 }

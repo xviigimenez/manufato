@@ -43,7 +43,7 @@ class AddEditProductActivity : AppCompatActivity() {
     private lateinit var saveButton: Button
     private lateinit var deleteButton: Button
     
-    private lateinit var productPrefs: ProductPreferences
+    private lateinit var dbHelper: DatabaseHelper
     private var currentProduct: Product? = null
     private var productImageUri: String? = null
     private var currentPhotoUri: Uri? = null
@@ -82,8 +82,17 @@ class AddEditProductActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_edit_product)
         
-        productPrefs = ProductPreferences(this)
-        currentProduct = intent.getParcelableExtra("product")
+        dbHelper = DatabaseHelper(this)
+        val productIdString = intent.getStringExtra("PRODUCT_ID")
+        
+        if (productIdString != null) {
+            try {
+                val productId = productIdString.toLong()
+                currentProduct = dbHelper.getProduct(productId)
+            } catch (e: NumberFormatException) {
+                e.printStackTrace()
+            }
+        }
         
         initViews()
         setupListeners()
@@ -281,22 +290,22 @@ class AddEditProductActivity : AppCompatActivity() {
         
         // Create or update product
         val product = Product(
-            id = currentProduct?.id ?: UUID.randomUUID().toString(),
+            id = currentProduct?.id ?: 0,
             name = name,
             description = description,
             price = price,
             quantity = quantity,
             category = category,
-            imageUri = productImageUri,
+            isAvailable = isAvailable,
             sales = currentProduct?.sales ?: 0,
-            isAvailable = isAvailable
+            imageUri = productImageUri
         )
         
         if (currentProduct != null) {
-            productPrefs.updateProduct(product)
+            dbHelper.updateProduct(product)
             Toast.makeText(this, "Produto atualizado!", Toast.LENGTH_SHORT).show()
         } else {
-            productPrefs.addProduct(product)
+            dbHelper.addProduct(product)
             Toast.makeText(this, "Produto adicionado!", Toast.LENGTH_SHORT).show()
         }
         
@@ -317,7 +326,7 @@ class AddEditProductActivity : AppCompatActivity() {
     
     private fun deleteProduct() {
         currentProduct?.let { product ->
-            productPrefs.deleteProduct(product.id)
+            dbHelper.deleteProduct(product.id)
             Toast.makeText(this, "Produto excluído", Toast.LENGTH_SHORT).show()
             setResult(Activity.RESULT_OK)
             finish()

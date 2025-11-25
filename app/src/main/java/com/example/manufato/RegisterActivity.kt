@@ -2,11 +2,14 @@ package com.example.manufato
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 
 class RegisterActivity : AppCompatActivity() {
     
@@ -16,14 +19,14 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var confirmPasswordInput: EditText
     private lateinit var registerButton: Button
     private lateinit var loginLink: TextView
-    private lateinit var userPrefs: UserPreferences
+    private lateinit var auth: FirebaseAuth
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
         
-        // Initialize UserPreferences
-        userPrefs = UserPreferences(this)
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
         
         initViews()
         setupListeners()
@@ -103,32 +106,51 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
         
-        // Check if user already exists
-        if (userPrefs.isUserRegistered()) {
-            val existingEmail = userPrefs.getUserEmail()
-            if (existingEmail == email) {
-                showToast("Este email já está cadastrado. Faça login.")
-                navigateToLogin()
-                return
+        // Create user with Firebase
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "createUserWithEmail:success")
+                    val user = auth.currentUser
+                    
+                    // Update user profile with name
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build()
+
+                    user?.updateProfile(profileUpdates)
+                        ?.addOnCompleteListener { profileTask ->
+                            if (profileTask.isSuccessful) {
+                                Log.d(TAG, "User profile updated.")
+                                showToast("Cadastro realizado com sucesso!")
+                                navigateToMain()
+                            }
+                        }
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                    showToast("Falha no cadastro: ${task.exception?.localizedMessage}")
+                }
             }
-        }
-        
-        // Save user data
-        userPrefs.saveUser(name, email, password)
-        showToast("Cadastro realizado com sucesso!")
-        
-        // Navigate to main activity
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
     }
     
     private fun navigateToLogin() {
         finish()
     }
     
+    private fun navigateToMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+    
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+    
+    companion object {
+        private const val TAG = "RegisterActivity"
     }
 }

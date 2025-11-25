@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "576359769850",
+    "project_id": "manufato-f569e",
+    "storage_bucket": "manufato-f569e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576359769850:android:996135daf8c9f3a9d48b43",
+        "android_client_info": {
+          "package_name": "com.bluds.manufato"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjDVRSO3Fy7Kx4TuyOuilwlJHK-MGDRAY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

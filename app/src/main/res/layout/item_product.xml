@@ -99,6 +99,20 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/edit_product"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/deleteButton" />
+            
+        <!-- Delete Button -->
+        <ImageView
+            android:id="@+id/deleteButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_check"
+            android:padding="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/delete_product"
+            app:tint="@color/error_red"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- Stats Container -->

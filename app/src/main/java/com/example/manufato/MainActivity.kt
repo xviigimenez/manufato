@@ -2,117 +2,40 @@ package com.example.manufato
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     
-    private lateinit var userPrefs: UserPreferences
-    private lateinit var productPrefs: ProductPreferences
-    private lateinit var productsRecyclerView: RecyclerView
-    private lateinit var productAdapter: HomeProductAdapter
+    private lateinit var searchBar: LinearLayout
     private lateinit var categorySpinner: Spinner
+    private lateinit var productsRecyclerView: RecyclerView
+    
+    override fun getCurrentNavItemId(): Int = R.id.nav_home
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // Initialize UserPreferences
-        userPrefs = UserPreferences(this)
-        productPrefs = ProductPreferences(this)
-        
-        // Check if user is logged in
-        if (!userPrefs.isLoggedIn()) {
-            navigateToLogin()
-            return
-        }
-        
         setContentView(R.layout.activity_main)
         
-        // Handle window insets for edge-to-edge display
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-        
-        setupBottomNavigation()
-        setupSearchBar()
+        initViews()
         setupCategorySpinner()
-        setupProductsList()
+        setupProductsRecyclerView()
+        setupSearchListener()
     }
     
-    override fun onResume() {
-        super.onResume()
-        loadProducts()
-    }
-    
-    private fun setupProductsList() {
+    private fun initViews() {
+        searchBar = findViewById(R.id.searchBar)
+        categorySpinner = findViewById(R.id.categorySpinner)
         productsRecyclerView = findViewById(R.id.productsRecyclerView)
-        productsRecyclerView.layoutManager = LinearLayoutManager(this)
-        
-        productAdapter = HomeProductAdapter(emptyList()) { product ->
-            // TODO: Navigate to product detail
-            showToast("Produto: ${product.name}")
-        }
-        
-        productsRecyclerView.adapter = productAdapter
-        loadProducts()
-    }
-    
-    private fun loadProducts() {
-        val products = productPrefs.getProducts()
-        // Only show available products on home page
-        val availableProducts = products.filter { it.isAvailable }
-        productAdapter.updateProducts(availableProducts)
-    }
-    
-    private fun setupBottomNavigation() {
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
-        bottomNav.selectedItemId = R.id.nav_home
-        
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    // Already on home
-                    true
-                }
-                R.id.nav_products -> {
-                    navigateToProducts()
-                    false
-                }
-                R.id.nav_cart -> {
-                    showToast("Carrinho em desenvolvimento")
-                    false
-                }
-                R.id.nav_profile -> {
-                    navigateToProfile()
-                    false
-                }
-                else -> false
-            }
-        }
-    }
-    
-    private fun setupSearchBar() {
-        val searchBar = findViewById<android.view.View>(R.id.searchBar)
-        searchBar.setOnClickListener {
-            showToast("Busca em desenvolvimento")
-        }
     }
     
     private fun setupCategorySpinner() {
-        categorySpinner = findViewById(R.id.categorySpinner)
-        
-        val categories = listOf(
+        val categories = arrayOf(
             getString(R.string.categories_title),
             getString(R.string.category_ceramics),
             getString(R.string.category_textiles),
@@ -125,40 +48,19 @@ class MainActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         categorySpinner.adapter = adapter
+    }
+    
+    private fun setupProductsRecyclerView() {
+        // Setup RecyclerView with a GridLayoutManager (2 columns)
+        productsRecyclerView.layoutManager = GridLayoutManager(this, 2)
         
-        categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (position > 0) {
-                    val selectedCategory = categories[position]
-                    showToast("Categoria selecionada: $selectedCategory")
-                    // TODO: Filter products by category
-                }
-            }
-            
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Do nothing
-            }
+        // This is where we would set the adapter with actual product data
+        // For now, the RecyclerView will be empty until we implement the adapter
+    }
+    
+    private fun setupSearchListener() {
+        searchBar.setOnClickListener {
+            Toast.makeText(this, "Busca em desenvolvimento", Toast.LENGTH_SHORT).show()
         }
-    }
-    
-    private fun navigateToProfile() {
-        val intent = Intent(this, ProfileActivity::class.java)
-        startActivity(intent)
-    }
-    
-    private fun navigateToProducts() {
-        val intent = Intent(this, ProductsActivity::class.java)
-        startActivity(intent)
-    }
-    
-    private fun navigateToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
-    }
-    
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

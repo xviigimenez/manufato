@@ -67,9 +67,39 @@
             android:name=".ProductsActivity"
             android:exported="false" />
         
+        <!-- Notifications Activity -->
+        <activity
+            android:name=".NotificationsActivity"
+            android:exported="false" />
+        
         <!-- Add/Edit Product Activity -->
         <activity
             android:name=".AddEditProductActivity"
+            android:exported="false" />
+            
+        <!-- Cart Activity -->
+        <activity
+            android:name=".CartActivity"
+            android:exported="false" />
+            
+        <!-- Orders Activity -->
+        <activity
+            android:name=".OrdersActivity"
+            android:exported="false" />
+
+        <!-- Change Password Activity -->
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:exported="false" />
+
+        <!-- Privacy Policy Activity -->
+        <activity
+            android:name=".PrivacyPolicyActivity"
+            android:exported="false" />
+
+        <!-- Help Support Activity -->
+        <activity
+            android:name=".HelpSupportActivity"
             android:exported="false" />
             
     </application>
