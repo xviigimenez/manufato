@@ -1,12 +1,15 @@
 package com.example.manufato
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 
 class ChangePasswordActivity : AppCompatActivity() {
 
@@ -16,13 +19,13 @@ class ChangePasswordActivity : AppCompatActivity() {
     private lateinit var confirmNewPasswordInput: EditText
     private lateinit var saveButton: Button
     private lateinit var cancelButton: TextView
-    private lateinit var userPrefs: UserPreferences
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_password)
 
-        userPrefs = UserPreferences(this)
+        auth = FirebaseAuth.getInstance()
 
         initViews()
         setupListeners()
@@ -56,15 +59,16 @@ class ChangePasswordActivity : AppCompatActivity() {
         val newPassword = newPasswordInput.text.toString()
         val confirmNewPassword = confirmNewPasswordInput.text.toString()
 
-        val storedPassword = userPrefs.getUserPassword()
+        val user = auth.currentUser
 
-        if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmNewPassword.isEmpty()) {
-            Toast.makeText(this, "Por favor, preencha todos os campos", Toast.LENGTH_SHORT).show()
+        if (user == null) {
+            Toast.makeText(this, "Usuário não autenticado", Toast.LENGTH_SHORT).show()
+            finish()
             return
         }
 
-        if (currentPassword != storedPassword) {
-            currentPasswordInput.error = "Senha atual incorreta"
+        if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmNewPassword.isEmpty()) {
+            Toast.makeText(this, "Por favor, preencha todos os campos", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -78,8 +82,33 @@ class ChangePasswordActivity : AppCompatActivity() {
             return
         }
 
-        userPrefs.updateUserPassword(newPassword)
-        Toast.makeText(this, "Senha alterada com sucesso", Toast.LENGTH_SHORT).show()
-        finish()
+        // Re-authenticate user before changing password
+        val credential = EmailAuthProvider.getCredential(user.email!!, currentPassword)
+
+        user.reauthenticate(credential)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Update password
+                    user.updatePassword(newPassword)
+                        .addOnCompleteListener { updateTask ->
+                            if (updateTask.isSuccessful) {
+                                Log.d(TAG, "Password updated")
+                                Toast.makeText(this, "Senha alterada com sucesso", Toast.LENGTH_SHORT).show()
+                                finish()
+                            } else {
+                                Log.e(TAG, "Error updating password", updateTask.exception)
+                                Toast.makeText(this, "Erro ao atualizar senha: ${updateTask.exception?.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                } else {
+                    Log.e(TAG, "Error re-authenticating", task.exception)
+                    currentPasswordInput.error = "Senha atual incorreta"
+                    Toast.makeText(this, "Falha na autenticação", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    companion object {
+        private const val TAG = "ChangePasswordActivity"
     }
 }

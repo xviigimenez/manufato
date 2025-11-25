@@ -101,6 +101,11 @@
         <activity
             android:name=".HelpSupportActivity"
             android:exported="false" />
+        
+        <!-- Product Details Activity -->
+        <activity
+            android:name=".ProductDetailsActivity"
+            android:exported="false" />
             
     </application>
 

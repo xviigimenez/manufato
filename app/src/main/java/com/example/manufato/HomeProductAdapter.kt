@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import java.io.File
 
 class HomeProductAdapter(
@@ -14,8 +15,11 @@ class HomeProductAdapter(
     private val onProductClick: (Product) -> Unit
 ) : RecyclerView.Adapter<HomeProductAdapter.ProductViewHolder>() {
 
+    private val auth = FirebaseAuth.getInstance()
+
     inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val productImage: ImageView = itemView.findViewById(R.id.productImage)
+        private val userProductIcon: ImageView = itemView.findViewById(R.id.userProductIcon)
         private val productName: TextView = itemView.findViewById(R.id.productName)
         private val productDescription: TextView = itemView.findViewById(R.id.productDescription)
         private val productPrice: TextView = itemView.findViewById(R.id.productPrice)
@@ -25,6 +29,14 @@ class HomeProductAdapter(
             productName.text = product.name
             productDescription.text = product.description
             productPrice.text = "R$ %.2f".format(product.price)
+
+            // Check if product belongs to current user
+            val currentUser = auth.currentUser
+            if (currentUser != null && product.artesao == currentUser.uid) {
+                userProductIcon.visibility = View.VISIBLE
+            } else {
+                userProductIcon.visibility = View.GONE
+            }
 
             // Load product image
             product.imageUri?.let { uriString ->

@@ -100,7 +100,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val sales = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SALES))
                 val imageUri = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URI))
 
-                val product = Product(id, name, description, price, quantity, category, isAvailable, sales, imageUri)
+                val product = Product(
+                    id = id,
+                    name = name,
+                    description = description,
+                    price = price,
+                    quantity = quantity,
+                    category = category,
+                    isAvailable = isAvailable,
+                    sales = sales,
+                    imageUri = imageUri
+                )
                 productList.add(product)
             } while (cursor.moveToNext())
         }
@@ -134,7 +144,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val sales = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SALES))
                 val imageUri = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URI))
 
-                product = Product(id, name, description, price, quantity, category, isAvailable, sales, imageUri)
+                product = Product(
+                    id = id,
+                    name = name,
+                    description = description,
+                    price = price,
+                    quantity = quantity,
+                    category = category,
+                    isAvailable = isAvailable,
+                    sales = sales,
+                    imageUri = imageUri
+                )
             }
             cursor.close()
         }

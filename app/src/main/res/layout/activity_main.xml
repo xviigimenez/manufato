@@ -50,7 +50,7 @@
 
             <!-- Search Bar -->
             <LinearLayout
-                android:id="@+id/searchBar"
+                android:id="@+id/searchBarContainer"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@drawable/search_background"
@@ -66,14 +66,20 @@
                     android:src="@drawable/ic_search"
                     android:contentDescription="Search icon" />
 
-                <TextView
+                <EditText
+                    android:id="@+id/searchInput"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="12dp"
-                    android:text="@string/search_hint"
-                    android:textColor="@color/text_hint"
-                    android:textSize="14sp" />
+                    android:hint="@string/search_hint"
+                    android:textColorHint="@color/text_hint"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:background="@null"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:imeOptions="actionSearch" />
 
             </LinearLayout>
 

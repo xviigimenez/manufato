@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
     
@@ -20,6 +21,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var registerButton: Button
     private lateinit var loginLink: TextView
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +29,8 @@ class RegisterActivity : AppCompatActivity() {
         
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
+        // Initialize Firebase Firestore
+        db = FirebaseFirestore.getInstance()
         
         initViews()
         setupListeners()
@@ -106,7 +110,7 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
         
-        // Create user with Firebase
+        // Create user with Firebase Auth
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -123,8 +127,9 @@ class RegisterActivity : AppCompatActivity() {
                         ?.addOnCompleteListener { profileTask ->
                             if (profileTask.isSuccessful) {
                                 Log.d(TAG, "User profile updated.")
-                                showToast("Cadastro realizado com sucesso!")
-                                navigateToMain()
+                                
+                                // Save user data to Firestore
+                                saveUserToFirestore(user.uid, name, email, password)
                             }
                         }
                 } else {
@@ -132,6 +137,32 @@ class RegisterActivity : AppCompatActivity() {
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
                     showToast("Falha no cadastro: ${task.exception?.localizedMessage}")
                 }
+            }
+    }
+
+    private fun saveUserToFirestore(uid: String, name: String, email: String, pass: String) {
+        // Create a user object for Firestore
+        // Note: Storing raw passwords is not recommended for security reasons, but implementing as requested.
+        val userMap = hashMapOf(
+            "nome" to name,
+            "email" to email,
+            "senha" to pass, // Consider hashing this or relying on Firebase Auth for password management
+            "telefone" to "", // Initial empty phone number
+            "tipo" to "cliente" // Default user type
+        )
+
+        db.collection("usuarios").document(uid)
+            .set(userMap)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully written!")
+                showToast("Cadastro realizado com sucesso!")
+                navigateToMain()
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error writing document", e)
+                showToast("Erro ao salvar dados do usuário: ${e.message}")
+                // Even if firestore fails, the auth account was created, so we might still proceed or handle rollback
+                navigateToMain() 
             }
     }
     

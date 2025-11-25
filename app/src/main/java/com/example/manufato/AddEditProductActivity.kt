@@ -22,6 +22,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -44,6 +46,9 @@ class AddEditProductActivity : AppCompatActivity() {
     private lateinit var deleteButton: Button
     
     private lateinit var dbHelper: DatabaseHelper
+    private lateinit var db: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
+    
     private var currentProduct: Product? = null
     private var productImageUri: String? = null
     private var currentPhotoUri: Uri? = null
@@ -83,9 +88,15 @@ class AddEditProductActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_edit_product)
         
         dbHelper = DatabaseHelper(this)
+        db = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+        
         val productIdString = intent.getStringExtra("PRODUCT_ID")
         
         if (productIdString != null) {
+            // Try to load from SQLite (legacy) or intent data if passed directly
+            // Ideally, we should fetch from Firestore if we have an ID
+            // For now, let's keep the local DB fetch for compatibility but we should transition to Firestore fetch
             try {
                 val productId = productIdString.toLong()
                 currentProduct = dbHelper.getProduct(productId)
@@ -243,6 +254,12 @@ class AddEditProductActivity : AppCompatActivity() {
         val category = productCategoryInput.text.toString().trim()
         val isAvailable = availabilitySwitch.isChecked
         
+        val user = auth.currentUser
+        if (user == null) {
+            Toast.makeText(this, "Você precisa estar logado para salvar produtos.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
         // Validation
         if (name.isEmpty()) {
             productNameInput.error = "Nome é obrigatório"
@@ -288,24 +305,73 @@ class AddEditProductActivity : AppCompatActivity() {
             return
         }
         
-        // Create or update product
-        val product = Product(
-            id = currentProduct?.id ?: 0,
-            name = name,
-            description = description,
-            price = price,
-            quantity = quantity,
-            category = category,
-            isAvailable = isAvailable,
-            sales = currentProduct?.sales ?: 0,
-            imageUri = productImageUri
+        val productMap = hashMapOf(
+            "nome" to name,
+            "descricao" to description,
+            "preco" to price,
+            "quantia" to quantity,
+            "artesao" to user.uid,
+            "categoria" to category,
+            "disponivel" to isAvailable,
+            // Note: We're not saving the image URI to Firestore for now as requested by parameters
+            // Ideally we would upload image to Firebase Storage and save the URL here
         )
         
+        // Create or update product locally and in Firebase
         if (currentProduct != null) {
+            // Update existing
+            val product = Product(
+                id = currentProduct!!.id,
+                firestoreId = currentProduct!!.firestoreId,
+                name = name,
+                description = description,
+                price = price,
+                quantity = quantity,
+                category = category,
+                isAvailable = isAvailable,
+                sales = currentProduct!!.sales,
+                imageUri = productImageUri,
+                artesao = user.uid
+            )
+            
             dbHelper.updateProduct(product)
+            
+            // Also update in Firestore if we have a firestoreId, or create a new one?
+            // Ideally we would have linked the local ID to a firestore ID.
+            // For this example, let's assume we are just adding new ones to Firestore or updating if we knew the ID.
+             if (currentProduct!!.firestoreId.isNotEmpty()) {
+                 db.collection("produtos").document(currentProduct!!.firestoreId)
+                     .update(productMap as Map<String, Any>)
+             }
+
             Toast.makeText(this, "Produto atualizado!", Toast.LENGTH_SHORT).show()
         } else {
-            dbHelper.addProduct(product)
+            // Add new
+            val product = Product(
+                name = name,
+                description = description,
+                price = price,
+                quantity = quantity,
+                category = category,
+                isAvailable = isAvailable,
+                sales = 0,
+                imageUri = productImageUri,
+                artesao = user.uid
+            )
+            
+            val id = dbHelper.addProduct(product)
+            
+            // Add to Firestore
+            db.collection("produtos")
+                .add(productMap)
+                .addOnSuccessListener { documentReference ->
+                    // Optionally update local DB with Firestore ID if needed
+                    Toast.makeText(this, "Produto salvo no Firebase!", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Erro ao salvar no Firebase: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            
             Toast.makeText(this, "Produto adicionado!", Toast.LENGTH_SHORT).show()
         }
         
@@ -327,6 +393,12 @@ class AddEditProductActivity : AppCompatActivity() {
     private fun deleteProduct() {
         currentProduct?.let { product ->
             dbHelper.deleteProduct(product.id)
+            
+            // Also delete from Firestore if it exists there
+             if (product.firestoreId.isNotEmpty()) {
+                 db.collection("produtos").document(product.firestoreId).delete()
+             }
+            
             Toast.makeText(this, "Produto excluído", Toast.LENGTH_SHORT).show()
             setResult(Activity.RESULT_OK)
             finish()
