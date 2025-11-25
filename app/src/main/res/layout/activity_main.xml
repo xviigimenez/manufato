@@ -19,13 +19,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/home_title"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_manufato_logo"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/app_name" />
 
     </com.google.android.material.appbar.MaterialToolbar>
 
@@ -55,7 +54,7 @@
                 android:gravity="center_vertical"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="16dp">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -74,194 +73,14 @@
 
             </LinearLayout>
 
-            <!-- Categories Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/categories_title"
-                android:textColor="@color/text_primary"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp" />
-
-            <!-- Categories Grid -->
-            <GridLayout
+            <!-- Categories Spinner -->
+            <Spinner
+                android:id="@+id/categorySpinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="3"
-                android:rowCount="2"
-                android:alignmentMode="alignBounds"
-                android:layout_marginBottom="24dp">
-
-                <!-- Category 1: Ceramics -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/category_background"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:text="🏺"
-                        android:textSize="28sp"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/category_ceramics"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        android:gravity="center"
-                        android:layout_marginTop="4dp" />
-                </LinearLayout>
-
-                <!-- Category 2: Textiles -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/category_background"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:text="🧵"
-                        android:textSize="28sp"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/category_textiles"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        android:gravity="center"
-                        android:layout_marginTop="4dp" />
-                </LinearLayout>
-
-                <!-- Category 3: Jewelry -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/category_background"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:text="💍"
-                        android:textSize="28sp"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/category_jewelry"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        android:gravity="center"
-                        android:layout_marginTop="4dp" />
-                </LinearLayout>
-
-                <!-- Category 4: Wood -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/category_background"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:text="🪵"
-                        android:textSize="28sp"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/category_wood"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        android:gravity="center"
-                        android:layout_marginTop="4dp" />
-                </LinearLayout>
-
-                <!-- Category 5: Leather -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/category_background"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:text="👜"
-                        android:textSize="28sp"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/category_leather"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        android:gravity="center"
-                        android:layout_marginTop="4dp" />
-                </LinearLayout>
-
-                <!-- Category 6: Art -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/category_background"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:text="🎨"
-                        android:textSize="28sp"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/category_art"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        android:gravity="center"
-                        android:layout_marginTop="4dp" />
-                </LinearLayout>
-
-            </GridLayout>
+                android:layout_height="48dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/search_background"
+                android:spinnerMode="dropdown" />
 
             <!-- Featured Products Section -->
             <LinearLayout

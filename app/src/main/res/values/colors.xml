@@ -2,23 +2,27 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    
-    <!-- Primary colors -->
-    <color name="primary">#043728</color>
-    <color name="primary_dark">#022418</color>
-    <color name="primary_light">#065A43</color>
-    <color name="accent">#6F10B981</color>
-    
+
+    <!-- Primary colors - Green theme -->
+    <color name="primary">#0b4f3f</color>
+    <color name="primary_dark">#063329</color>
+    <color name="primary_light">#10725d</color>
+    <color name="accent">#10B981</color>
+
     <!-- Background colors -->
-    <color name="background">#7FF0FDF4</color>
+    <color name="background">#F0FDF4</color>
     <color name="surface">#FFFFFF</color>
-    
+
     <!-- Text colors -->
     <color name="text_primary">#022418</color>
     <color name="text_secondary">#6B7280</color>
     <color name="text_hint">#9CA3AF</color>
-    
+
     <!-- Other colors -->
-    <color name="divider">#80D1FAE5</color>
-    <color name="category_bg">#7FBAC8BE</color>
+    <color name="divider">#D1FAE5</color>
+    <color name="category_bg">#BAC8BE</color>
+
+    <!-- login color -->
+    <color name="brandDark">#0b4f3f</color>
+    <color name="buttonGray">#bfcfc6</color>
 </resources>

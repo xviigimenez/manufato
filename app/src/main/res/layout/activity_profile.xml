@@ -245,7 +245,7 @@
                     android:layout_marginStart="56dp"
                     android:background="@color/divider" />
 
-                <!-- Favorites -->
+                <!-- Cart -->
                 <LinearLayout
                     android:id="@+id/favoritesItem"
                     android:layout_width="match_parent"
@@ -261,15 +261,15 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_favorite"
-                        android:contentDescription="Favorites icon" />
+                        android:src="@drawable/ic_cart"
+                        android:contentDescription="Cart icon" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="@string/favorites"
+                        android:text="@string/nav_cart"
                         android:textColor="@color/text_primary"
                         android:textSize="16sp" />
 

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -84,8 +85,8 @@ class ProductsActivity : AppCompatActivity() {
                     // Already on products screen
                     true
                 }
-                R.id.nav_favorites -> {
-                    // TODO: Navigate to favorites
+                R.id.nav_cart -> {
+                    showToast("Carrinho em desenvolvimento")
                     true
                 }
                 R.id.nav_profile -> {
@@ -132,5 +133,9 @@ class ProductsActivity : AppCompatActivity() {
         val intent = Intent(this, AddEditProductActivity::class.java)
         intent.putExtra("product", product)
         addEditProductLauncher.launch(intent)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

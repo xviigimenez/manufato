@@ -2,6 +2,10 @@ package com.example.manufato
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var productPrefs: ProductPreferences
     private lateinit var productsRecyclerView: RecyclerView
     private lateinit var productAdapter: HomeProductAdapter
+    private lateinit var categorySpinner: Spinner
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         
         setupBottomNavigation()
         setupSearchBar()
-        setupCategories()
+        setupCategorySpinner()
         setupProductsList()
     }
     
@@ -84,8 +89,8 @@ class MainActivity : AppCompatActivity() {
                     navigateToProducts()
                     false
                 }
-                R.id.nav_favorites -> {
-                    showToast("Favoritos em desenvolvimento")
+                R.id.nav_cart -> {
+                    showToast("Carrinho em desenvolvimento")
                     false
                 }
                 R.id.nav_profile -> {
@@ -104,9 +109,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
     
-    private fun setupCategories() {
-        // Categories are clickable but functionality is not implemented yet
-        // This is a placeholder for future implementation
+    private fun setupCategorySpinner() {
+        categorySpinner = findViewById(R.id.categorySpinner)
+        
+        val categories = listOf(
+            getString(R.string.categories_title),
+            getString(R.string.category_ceramics),
+            getString(R.string.category_textiles),
+            getString(R.string.category_jewelry),
+            getString(R.string.category_wood),
+            getString(R.string.category_leather),
+            getString(R.string.category_art)
+        )
+        
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        categorySpinner.adapter = adapter
+        
+        categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (position > 0) {
+                    val selectedCategory = categories[position]
+                    showToast("Categoria selecionada: $selectedCategory")
+                    // TODO: Filter products by category
+                }
+            }
+            
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Do nothing
+            }
+        }
     }
     
     private fun navigateToProfile() {

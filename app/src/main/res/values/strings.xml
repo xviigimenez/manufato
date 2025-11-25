@@ -19,7 +19,7 @@
     <!-- Navigation -->
     <string name="nav_home">Início</string>
     <string name="nav_products">Produtos</string>
-    <string name="nav_favorites">Favoritos</string>
+    <string name="nav_cart">Carrinho</string>
     <string name="nav_profile">Perfil</string>
     
     <!-- Common -->

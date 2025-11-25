@@ -156,8 +156,8 @@ class ProfileActivity : AppCompatActivity() {
                     navigateToProducts()
                     true
                 }
-                R.id.nav_favorites -> {
-                    // TODO: Navigate to favorites
+                R.id.nav_cart -> {
+                    showToast("Carrinho em desenvolvimento")
                     true
                 }
                 R.id.nav_profile -> {
